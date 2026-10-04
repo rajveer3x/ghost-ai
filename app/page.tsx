@@ -1,9 +1,13 @@
-import Image from "next/image";
+import { auth } from '@clerk/nextjs/server';
+import { redirect } from 'next/navigation';
 
-export default function Home() {
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-between p-24"><h1>Ghost ai</h1>
-    <button>Click me</button>
-    </div>
-  );
+export default async function Home() {
+  const { userId } = await auth();
+
+  if (userId) {
+    redirect('/editor');
+  }
+
+  redirect(process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL || '/sign-in');
 }
+
