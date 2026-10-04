@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from './generated/prisma/client';
 
 const connectionString = process.env.DATABASE_URL;
 
@@ -8,7 +8,7 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 const createPrismaClient = () => {
   if (connectionString?.startsWith('prisma+postgres://')) {
-    return new PrismaClient();
+    return new PrismaClient({} as any);
   }
   
   const pool = new Pool({ connectionString });

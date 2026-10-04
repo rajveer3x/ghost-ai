@@ -4,26 +4,26 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
+interface Project {
+  id: string;
+  name: string;
+}
+
 interface ProjectSidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  myProjects: Project[];
+  sharedProjects: Project[];
   onCreateProject?: () => void;
   onRenameProject?: (id: string, currentName: string) => void;
   onDeleteProject?: (id: string) => void;
 }
 
-const MOCK_MY_PROJECTS = [
-  { id: "1", name: "E-Commerce Architecture" },
-  { id: "2", name: "Internal Dashboard" },
-];
-
-const MOCK_SHARED_PROJECTS = [
-  { id: "3", name: "Client Portal V2" },
-];
-
 export function ProjectSidebar({ 
   isOpen, 
   onClose,
+  myProjects,
+  sharedProjects,
   onCreateProject,
   onRenameProject,
   onDeleteProject
@@ -59,13 +59,13 @@ export function ProjectSidebar({
             </TabsList>
             <TabsContent value="my-projects" className="flex-1 overflow-hidden mt-4">
               <ScrollArea className="h-full pr-4">
-                {MOCK_MY_PROJECTS.length === 0 ? (
+                {myProjects.length === 0 ? (
                   <div className="flex items-center justify-center text-muted-foreground text-sm h-full">
                     No projects found.
                   </div>
                 ) : (
                   <div className="space-y-1">
-                    {MOCK_MY_PROJECTS.map((project) => (
+                    {myProjects.map((project) => (
                       <div 
                         key={project.id}
                         className="group flex items-center justify-between p-2 rounded-md hover:bg-muted/50 cursor-pointer text-sm"
@@ -103,13 +103,13 @@ export function ProjectSidebar({
             </TabsContent>
             <TabsContent value="shared" className="flex-1 overflow-hidden mt-4">
               <ScrollArea className="h-full pr-4">
-                {MOCK_SHARED_PROJECTS.length === 0 ? (
+                {sharedProjects.length === 0 ? (
                   <div className="flex items-center justify-center text-muted-foreground text-sm h-full">
                     No shared projects.
                   </div>
                 ) : (
                   <div className="space-y-1">
-                    {MOCK_SHARED_PROJECTS.map((project) => (
+                    {sharedProjects.map((project) => (
                       <div 
                         key={project.id}
                         className="flex items-center p-2 rounded-md hover:bg-muted/50 cursor-pointer text-sm"
@@ -133,4 +133,3 @@ export function ProjectSidebar({
     </>
   );
 }
-
