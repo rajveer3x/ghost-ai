@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface Project {
   id: string;
@@ -17,6 +18,7 @@ interface ProjectSidebarProps {
   onCreateProject?: () => void;
   onRenameProject?: (id: string, currentName: string) => void;
   onDeleteProject?: (id: string) => void;
+  activeProjectId?: string;
 }
 
 export function ProjectSidebar({ 
@@ -26,7 +28,8 @@ export function ProjectSidebar({
   sharedProjects,
   onCreateProject,
   onRenameProject,
-  onDeleteProject
+  onDeleteProject,
+  activeProjectId
 }: ProjectSidebarProps) {
   return (
     <>
@@ -66,9 +69,13 @@ export function ProjectSidebar({
                 ) : (
                   <div className="space-y-1">
                     {myProjects.map((project) => (
-                      <div 
+                      <Link
+                        href={`/editor/${project.id}`}
                         key={project.id}
-                        className="group flex items-center justify-between p-2 rounded-md hover:bg-muted/50 cursor-pointer text-sm"
+                        className={cn(
+                          "group flex items-center justify-between p-2 rounded-md hover:bg-muted/50 text-sm transition-colors",
+                          activeProjectId === project.id ? "bg-muted font-medium" : ""
+                        )}
                       >
                         <span className="truncate flex-1">{project.name}</span>
                         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -77,6 +84,7 @@ export function ProjectSidebar({
                             size="icon" 
                             className="h-7 w-7 text-muted-foreground hover:text-foreground"
                             onClick={(e) => {
+                              e.preventDefault();
                               e.stopPropagation();
                               onRenameProject?.(project.id, project.name);
                             }}
@@ -88,6 +96,7 @@ export function ProjectSidebar({
                             size="icon" 
                             className="h-7 w-7 text-muted-foreground hover:text-destructive"
                             onClick={(e) => {
+                              e.preventDefault();
                               e.stopPropagation();
                               onDeleteProject?.(project.id);
                             }}
@@ -95,7 +104,7 @@ export function ProjectSidebar({
                             <Trash2 className="h-3.5 w-3.5" />
                           </Button>
                         </div>
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 )}
@@ -110,12 +119,16 @@ export function ProjectSidebar({
                 ) : (
                   <div className="space-y-1">
                     {sharedProjects.map((project) => (
-                      <div 
+                      <Link
+                        href={`/editor/${project.id}`}
                         key={project.id}
-                        className="flex items-center p-2 rounded-md hover:bg-muted/50 cursor-pointer text-sm"
+                        className={cn(
+                          "flex items-center p-2 rounded-md hover:bg-muted/50 text-sm transition-colors",
+                          activeProjectId === project.id ? "bg-muted font-medium" : ""
+                        )}
                       >
                         <span className="truncate">{project.name}</span>
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 )}
