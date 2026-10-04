@@ -11,47 +11,65 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { DialogType } from "@/hooks/use-project-dialogs";
+import { DialogType } from "@/hooks/use-project-actions";
 
 interface ProjectDialogsProps {
   activeDialog: DialogType;
   projectId: string | null;
   projectName: string;
   onClose: () => void;
+  onCreateProject: (name: string) => Promise<void>;
+  onRenameProject: (id: string, newName: string) => Promise<void>;
+  onDeleteProject: (id: string) => Promise<void>;
 }
 
 export function ProjectDialogs({
   activeDialog,
-  projectId, // Keep for API calls later
+  projectId,
   projectName,
   onClose,
+  onCreateProject,
+  onRenameProject,
+  onDeleteProject
 }: ProjectDialogsProps) {
   return (
     <>
       <Dialog open={activeDialog === "create"} onOpenChange={(open) => !open && onClose()}>
         <DialogContent>
-          {activeDialog === "create" && <CreateProjectForm onClose={onClose} />}
+          {activeDialog === "create" && <CreateProjectForm onClose={onClose} onCreate={onCreateProject} />}
         </DialogContent>
       </Dialog>
 
       <Dialog open={activeDialog === "rename"} onOpenChange={(open) => !open && onClose()}>
         <DialogContent>
-          {activeDialog === "rename" && (
-            <RenameProjectForm projectName={projectName} onClose={onClose} />
+          {activeDialog === "rename" && projectId && (
+            <RenameProjectForm 
+              projectId={projectId}
+              projectName={projectName} 
+              onClose={onClose} 
+              onRename={onRenameProject} 
+            />
           )}
         </DialogContent>
       </Dialog>
 
       <Dialog open={activeDialog === "delete"} onOpenChange={(open) => !open && onClose()}>
         <DialogContent>
-          <DeleteProjectForm projectId={projectId} onClose={onClose} />
+          {activeDialog === "delete" && projectId && (
+            <DeleteProjectForm 
+              projectId={projectId}
+              projectName={projectName} 
+              onClose={onClose} 
+              onDelete={onDeleteProject} 
+            />
+          )}
         </DialogContent>
       </Dialog>
     </>
   );
 }
 
-function CreateProjectForm({ onClose }: { onClose: () => void }) {
+function CreateProjectForm({ onClose, onCreate }: { onClose: () => void, onCreate: (name: string) => Promise<void> }) {
   const [nameInput, setNameInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -60,14 +78,12 @@ function CreateProjectForm({ onClose }: { onClose: () => void }) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 
-  const handleCreate = (e: React.FormEvent) => {
+  const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nameInput.trim()) return;
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      onClose();
-    }, 500);
+    await onCreate(nameInput);
+    setIsSubmitting(false);
   };
 
   return (
@@ -96,7 +112,7 @@ function CreateProjectForm({ onClose }: { onClose: () => void }) {
             <>
               <span className="mr-1">URL slug:</span>
               <span className="font-mono bg-muted px-1.5 py-0.5 rounded text-foreground">
-                {slugPreview}
+                {slugPreview}-XXXXX
               </span>
             </>
           )}
@@ -114,18 +130,26 @@ function CreateProjectForm({ onClose }: { onClose: () => void }) {
   );
 }
 
-function RenameProjectForm({ projectName, onClose }: { projectName: string; onClose: () => void }) {
+function RenameProjectForm({ 
+  projectId,
+  projectName, 
+  onClose,
+  onRename 
+}: { 
+  projectId: string;
+  projectName: string; 
+  onClose: () => void;
+  onRename: (id: string, name: string) => Promise<void>;
+}) {
   const [nameInput, setNameInput] = useState(projectName);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleRename = (e: React.FormEvent) => {
+  const handleRename = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nameInput.trim() || nameInput === projectName) return;
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      onClose();
-    }, 500);
+    await onRename(projectId, nameInput);
+    setIsSubmitting(false);
   };
 
   return (
@@ -156,16 +180,23 @@ function RenameProjectForm({ projectName, onClose }: { projectName: string; onCl
   );
 }
 
-function DeleteProjectForm({ projectId, onClose }: { projectId: string | null; onClose: () => void }) {
+function DeleteProjectForm({ 
+  projectId, 
+  projectName,
+  onClose,
+  onDelete 
+}: { 
+  projectId: string; 
+  projectName: string;
+  onClose: () => void;
+  onDelete: (id: string) => Promise<void>;
+}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleDelete = () => {
-    if (!projectId) return;
+  const handleDelete = async () => {
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      onClose();
-    }, 500);
+    await onDelete(projectId);
+    setIsSubmitting(false);
   };
 
   return (
@@ -173,7 +204,7 @@ function DeleteProjectForm({ projectId, onClose }: { projectId: string | null; o
       <DialogHeader>
         <DialogTitle>Delete Project</DialogTitle>
         <DialogDescription>
-          Are you sure you want to delete this project? This action cannot be undone.
+          Are you sure you want to delete <span className="font-semibold text-foreground">{projectName}</span>? This action cannot be undone.
         </DialogDescription>
       </DialogHeader>
       <DialogFooter className="mt-6">
