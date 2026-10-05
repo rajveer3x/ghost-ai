@@ -8,9 +8,10 @@ interface EditorNavbarProps {
   onToggleSidebar: () => void;
   projectName?: string;
   actions?: ReactNode;
+  hideUserButton?: boolean;
 }
 
-export function EditorNavbar({ isSidebarOpen, onToggleSidebar, projectName, actions }: EditorNavbarProps) {
+export function EditorNavbar({ isSidebarOpen, onToggleSidebar, projectName, actions, hideUserButton }: EditorNavbarProps) {
   return (
     <nav className="h-14 shrink-0 flex items-center justify-between px-4 bg-[#0E0E10] border-b border-zinc-800/50 z-40">
       <div className="flex items-center flex-1 gap-4">
@@ -18,7 +19,7 @@ export function EditorNavbar({ isSidebarOpen, onToggleSidebar, projectName, acti
           {isSidebarOpen ? <PanelLeftClose className="h-5 w-5" /> : <PanelLeftOpen className="h-5 w-5" />}
         </Button>
         <div className="flex flex-col">
-          <span className="font-semibold text-sm text-zinc-100">Liveblocks Live Room</span>
+          <span className="font-semibold text-sm text-zinc-100">{projectName || "Liveblocks Live Room"}</span>
           <span className="text-[10px] text-zinc-500 uppercase tracking-wider">Workspace</span>
         </div>
       </div>
@@ -28,15 +29,17 @@ export function EditorNavbar({ isSidebarOpen, onToggleSidebar, projectName, acti
       
       <div className="flex items-center justify-end flex-1 gap-3">
         {actions}
-        <div className="pl-2 border-l border-zinc-800">
-          <UserButton 
-            appearance={{
-              elements: {
-                avatarBox: "h-8 w-8"
-              }
-            }}
-          />
-        </div>
+        {!hideUserButton && (
+          <div className="pl-2 border-l border-zinc-800">
+            <UserButton 
+              appearance={{
+                elements: {
+                  avatarBox: "h-8 w-8"
+                }
+              }}
+            />
+          </div>
+        )}
       </div>
     </nav>
   );

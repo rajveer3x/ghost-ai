@@ -2,6 +2,7 @@
 
 import { useCallback, useRef, useEffect } from "react";
 import { useLiveblocksFlow } from "@liveblocks/react-flow";
+import { useMyPresence } from "@liveblocks/react";
 import { ReactFlow, MiniMap, Background, BackgroundVariant, ConnectionMode, useReactFlow, MarkerType, type Node, type Edge } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import "@liveblocks/react-flow/styles.css";
@@ -9,6 +10,9 @@ import { ShapePanel } from "./shape-panel";
 import { CanvasNode } from "./canvas-node";
 import { CanvasEdge } from "./canvas-edge";
 import { CanvasControls } from "./canvas-controls";
+import { LiveCursors } from "./live-cursors";
+import { PresenceAvatars } from "./presence-avatars";
+import { useCanvasAutosave } from "@/hooks/use-canvas-autosave";
 
 const nodeTypes = {
   canvasNode: CanvasNode,
@@ -18,7 +22,7 @@ const edgeTypes = {
   canvasEdge: CanvasEdge,
 };
 
-export function CollaborativeCanvas() {
+export function CollaborativeCanvas({ projectId }: { projectId: string }) {
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect, onDelete } = useLiveblocksFlow<Node, Edge>({
     suspense: true,
     nodes: {
@@ -29,8 +33,56 @@ export function CollaborativeCanvas() {
     },
   });
 
-  const { screenToFlowPosition, setNodes, setEdges } = useReactFlow();
+  const { screenToFlowPosition, setNodes, setEdges, fitView } = useReactFlow();
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
+  
+  const [, updateMyPresence] = useMyPresence();
+  
+  const { saveStatus } = useCanvasAutosave(projectId, nodes, edges);
+
+  const hasFittedView = useRef(false);
+
+  useEffect(() => {
+    // If the room already has nodes when we mount, fit view once
+    if (!hasFittedView.current && nodes.length > 0) {
+      setTimeout(() => fitView({ maxZoom: 1 }), 50);
+      hasFittedView.current = true;
+    }
+  }, []); // Run ONLY on mount!
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("canvas-save-status", { detail: saveStatus }));
+    }
+  }, [saveStatus]);
+
+  useEffect(() => {
+    // Load initial canvas state from backend if room is empty
+    const loadInitialState = async () => {
+      if (nodes.length === 0 && edges.length === 0) {
+        try {
+          const res = await fetch(`/api/projects/${projectId}/canvas`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.nodes && data.nodes.length > 0) {
+              setNodes(data.nodes);
+              setEdges(data.edges || []);
+              setTimeout(() => fitView({ maxZoom: 1 }), 50);
+            }
+          }
+        } catch (error) {
+          console.error("Failed to load initial canvas state", error);
+        }
+        hasFittedView.current = true; // Mark as fitted so subsequent drops don't zoom
+      }
+    };
+    
+    // We only want to attempt this once after the Liveblocks initial sync.
+    // If it's already synced and empty, we load.
+    // Since useLiveblocksFlow suspense is true, it's synced on mount.
+    loadInitialState();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const handleImportTemplate = (e: CustomEvent) => {
@@ -80,8 +132,26 @@ export function CollaborativeCanvas() {
     [screenToFlowPosition, onNodesChange],
   );
 
+  const handlePointerMove = useCallback((e: React.MouseEvent) => {
+    const position = screenToFlowPosition({
+      x: e.clientX,
+      y: e.clientY,
+    });
+    
+    updateMyPresence({ cursor: position });
+  }, [screenToFlowPosition, updateMyPresence]);
+
+  const handlePointerLeave = useCallback(() => {
+    updateMyPresence({ cursor: null });
+  }, [updateMyPresence]);
+
   return (
-    <div className="relative h-full w-full" ref={reactFlowWrapper}>
+    <div 
+      className="relative h-full w-full" 
+      ref={reactFlowWrapper}
+    >
+      <PresenceAvatars />
+      <LiveCursors />
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -91,6 +161,8 @@ export function CollaborativeCanvas() {
         onDelete={onDelete}
         onDragOver={onDragOver}
         onDrop={onDrop}
+        onMouseMove={handlePointerMove}
+        onMouseLeave={handlePointerLeave}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         defaultEdgeOptions={{
@@ -99,7 +171,6 @@ export function CollaborativeCanvas() {
         }}
         connectionMode={ConnectionMode.Loose}
         colorMode="dark"
-        fitView
       >
         <Background variant={BackgroundVariant.Dots} color="#27272a" gap={16} size={1.5} />
         <MiniMap 

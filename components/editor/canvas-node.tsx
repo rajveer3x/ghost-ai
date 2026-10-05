@@ -161,10 +161,10 @@ export function CanvasNode({ id, data, selected }: NodeProps) {
         )}
       </div>
       
-      <Handle id="top" type="source" position={Position.Top} className="w-2 h-2 bg-white border-2 border-zinc-900 opacity-0 group-hover:opacity-100 transition-opacity" />
-      <Handle id="right" type="source" position={Position.Right} className="w-2 h-2 bg-white border-2 border-zinc-900 opacity-0 group-hover:opacity-100 transition-opacity" />
-      <Handle id="bottom" type="source" position={Position.Bottom} className="w-2 h-2 bg-white border-2 border-zinc-900 opacity-0 group-hover:opacity-100 transition-opacity" />
-      <Handle id="left" type="source" position={Position.Left} className="w-2 h-2 bg-white border-2 border-zinc-900 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <Handle id="top" type="source" position={Position.Top} className="!z-50 w-2 h-2 bg-white border-2 border-zinc-900 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <Handle id="right" type="source" position={Position.Right} className="!z-50 w-2 h-2 bg-white border-2 border-zinc-900 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <Handle id="bottom" type="source" position={Position.Bottom} className="!z-50 w-2 h-2 bg-white border-2 border-zinc-900 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <Handle id="left" type="source" position={Position.Left} className="!z-50 w-2 h-2 bg-white border-2 border-zinc-900 opacity-0 group-hover:opacity-100 transition-opacity" />
     </div>
   );
 }
