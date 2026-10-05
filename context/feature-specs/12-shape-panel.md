@@ -41,3 +41,7 @@ Add a bottom shape panel so users can drag shapes onto the canvas and create new
 - Drop logic creates new canvas nodes with the expected shape data.
 - New nodes use the custom canvas node type.
 - `npm run build` passes without type errors.
+
+
+
+also update the Progress-tracker.md file 
