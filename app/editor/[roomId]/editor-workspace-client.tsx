@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Share, MessageSquare, PanelRightClose, PanelRightOpen, Sparkles } from "lucide-react";
+import { Share, MessageSquare, PanelRightClose, PanelRightOpen, Sparkles, LayoutTemplate } from "lucide-react";
 import { EditorNavbar } from "@/components/editor/editor-navbar";
 import { ProjectSidebar } from "@/components/editor/project-sidebar";
 import { ProjectDialogs } from "@/components/editor/project-dialogs";
 import { ShareDialog } from "@/components/editor/share-dialog";
+import { StarterTemplatesModal } from "@/components/editor/starter-templates-modal";
 import { useProjectActions } from "@/hooks/use-project-actions";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -32,6 +33,7 @@ export function EditorWorkspaceClient({
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
+  const [isTemplatesModalOpen, setIsTemplatesModalOpen] = useState(false);
 
   const {
     activeDialog,
@@ -54,6 +56,10 @@ export function EditorWorkspaceClient({
         projectName={project.name}
         actions={
           <>
+            <Button variant="outline" size="sm" onClick={() => setIsTemplatesModalOpen(true)} className="border-zinc-800 bg-transparent hover:bg-zinc-800 text-zinc-300">
+              <LayoutTemplate className="mr-2 h-4 w-4" />
+              Templates
+            </Button>
             <Button variant="outline" size="sm" onClick={() => setIsShareDialogOpen(true)} className="border-zinc-800 bg-transparent hover:bg-zinc-800 text-zinc-300">
               <Share className="mr-2 h-4 w-4" />
               Share
@@ -76,6 +82,19 @@ export function EditorWorkspaceClient({
         isOpen={isShareDialogOpen}
         onClose={() => setIsShareDialogOpen(false)}
         isOwner={isOwner}
+      />
+
+      <StarterTemplatesModal
+        open={isTemplatesModalOpen}
+        onOpenChange={setIsTemplatesModalOpen}
+        onImport={(template) => {
+          setIsTemplatesModalOpen(false);
+          setTimeout(() => {
+            if (typeof window !== "undefined") {
+              window.dispatchEvent(new CustomEvent("import-template", { detail: template }));
+            }
+          }, 100);
+        }}
       />
 
       <div className="relative flex-1 overflow-hidden">
