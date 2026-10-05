@@ -8,6 +8,7 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 const createPrismaClient = () => {
   if (connectionString?.startsWith('prisma+postgres://')) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return new PrismaClient({} as any);
   }
   
