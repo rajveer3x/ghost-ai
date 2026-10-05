@@ -1,15 +1,21 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useEffect } from "react";
 import { useLiveblocksFlow } from "@liveblocks/react-flow";
-import { ReactFlow, MiniMap, Background, BackgroundVariant, ConnectionMode, useReactFlow, type Node, type Edge } from "@xyflow/react";
+import { ReactFlow, MiniMap, Background, BackgroundVariant, ConnectionMode, useReactFlow, MarkerType, type Node, type Edge } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import "@liveblocks/react-flow/styles.css";
 import { ShapePanel } from "./shape-panel";
 import { CanvasNode } from "./canvas-node";
+import { CanvasEdge } from "./canvas-edge";
+import { CanvasControls } from "./canvas-controls";
 
 const nodeTypes = {
   canvasNode: CanvasNode,
+};
+
+const edgeTypes = {
+  canvasEdge: CanvasEdge,
 };
 
 export function CollaborativeCanvas() {
@@ -23,8 +29,21 @@ export function CollaborativeCanvas() {
     },
   });
 
-  const { screenToFlowPosition } = useReactFlow();
+  const { screenToFlowPosition, setNodes, setEdges } = useReactFlow();
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleImportTemplate = (e: CustomEvent) => {
+      const template = e.detail;
+      if (template) {
+        setNodes(template.nodes);
+        setEdges(template.edges);
+      }
+    };
+    
+    window.addEventListener("import-template", handleImportTemplate as EventListener);
+    return () => window.removeEventListener("import-template", handleImportTemplate as EventListener);
+  }, [setNodes, setEdges]);
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
@@ -73,6 +92,11 @@ export function CollaborativeCanvas() {
         onDragOver={onDragOver}
         onDrop={onDrop}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        defaultEdgeOptions={{
+          type: 'canvasEdge',
+          markerEnd: { type: MarkerType.ArrowClosed, color: '#e4e4e7' },
+        }}
         connectionMode={ConnectionMode.Loose}
         colorMode="dark"
         fitView
@@ -84,6 +108,7 @@ export function CollaborativeCanvas() {
           style={{ backgroundColor: '#18181b' }}
         />
         <ShapePanel />
+        <CanvasControls />
       </ReactFlow>
     </div>
   );
