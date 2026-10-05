@@ -11,6 +11,9 @@ import { useProjectActions } from "@/hooks/use-project-actions";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CanvasWrapper } from "@/components/editor/canvas-wrapper";
+import { AiSidebar } from "@/components/editor/ai-sidebar";
+
+import { SaveButton } from "@/components/editor/save-button";
 
 interface Project {
   id: string;
@@ -54,8 +57,10 @@ export function EditorWorkspaceClient({
         isSidebarOpen={isSidebarOpen}
         onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
         projectName={project.name}
+        hideUserButton={true}
         actions={
           <>
+            <SaveButton />
             <Button variant="outline" size="sm" onClick={() => setIsTemplatesModalOpen(true)} className="border-zinc-800 bg-transparent hover:bg-zinc-800 text-zinc-300">
               <LayoutTemplate className="mr-2 h-4 w-4" />
               Templates
@@ -129,40 +134,7 @@ export function EditorWorkspaceClient({
             isRightSidebarOpen ? "translate-x-0" : "translate-x-[calc(100%+16px)]"
           )}
         >
-          <aside className="h-full w-full bg-[#141415]/95 backdrop-blur-md rounded-xl border border-zinc-800 flex flex-col overflow-hidden">
-            <div className="p-4 border-b border-zinc-800/50 flex flex-col gap-1">
-              <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-zinc-100">AI Copilot</h3>
-                <Sparkles className="h-4 w-4 text-[#00D4FF] ml-auto" />
-              </div>
-              <p className="text-xs text-zinc-500">Placeholder panel</p>
-            </div>
-            
-            <div className="flex-1 p-4 flex flex-col gap-4">
-              <div className="rounded-lg border border-zinc-800/50 bg-zinc-900/50 p-4">
-                <div className="flex items-start gap-3">
-                  <div className="h-8 w-8 rounded bg-indigo-500/20 flex items-center justify-center shrink-0">
-                    <MessageSquare className="h-4 w-4 text-indigo-400" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium text-zinc-200 mb-1">Chat surface pending</h4>
-                    <p className="text-xs text-zinc-500 leading-relaxed">
-                      The toggle is wired. Messaging and generation are intentionally out of scope here.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 mt-auto">
-              <div className="rounded-lg border border-zinc-800/50 bg-zinc-900/50 p-4">
-                <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Future Hooks</h4>
-                <p className="text-xs text-zinc-500 leading-relaxed">
-                  Prompt composer, run status, and architecture guidance will attach to this sidebar.
-                </p>
-              </div>
-            </div>
-          </aside>
+          <AiSidebar onClose={() => setIsRightSidebarOpen(false)} />
         </div>
       </div>
 

@@ -32,10 +32,10 @@ export function CanvasWrapper({ roomId }: CanvasWrapperProps) {
   return (
     <LiveblocksProvider authEndpoint="/api/liveblocks-auth">
       <ErrorBoundary fallback={<div className="flex h-full w-full items-center justify-center text-red-500">Failed to connect to the canvas room. Please try again later.</div>}>
-        <RoomProvider id={roomId} initialPresence={{ cursor: null }}>
+        <RoomProvider id={roomId} initialPresence={{ cursor: null, thinking: false }}>
           <ClientSideSuspense fallback={<div className="flex h-full w-full items-center justify-center text-zinc-400">Loading canvas...</div>}>
             <ReactFlowProvider>
-              <CollaborativeCanvas />
+              <CollaborativeCanvas projectId={roomId} />
             </ReactFlowProvider>
           </ClientSideSuspense>
         </RoomProvider>

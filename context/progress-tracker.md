@@ -8,7 +8,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Goal
 
-- Implement custom node types and drag-and-drop shape panel for the collaborative canvas.
+- Implement Canvas autosave to Vercel Blob and Prisma.
 
 ## Completed
 
@@ -22,15 +22,21 @@ Update this file whenever the current phase, active feature, or implementation s
 - Implemented inline node label editing with auto-resizing textarea that safely avoids canvas dragging/panning during edits.
 - Added a floating `NodeToolbar` for selected nodes that allows changing the node's background and text color based on predefined aesthetic dark-mode themes.
 - Implemented custom canvas edges with clean right-angle routing, hidden handles that fade on hover, and inline edge label editing.
-
 - Added a floating control bar on the canvas for zoom and history controls.
 - Linked zoom controls to React Flow instance and history controls (undo/redo) to Liveblocks history.
 - Implemented global keyboard shortcuts for zoom and undo/redo while avoiding input fields.
 - Fixed the Template Modal by lifting its state out of the React Flow context and to the top-level EditorWorkspaceClient, resolving an issue where the modal wouldn't open. The modal correctly imports templates via window events without CRDT collisions.
+- Implemented presence avatars displaying collaborators inside the editor canvas view using Liveblocks presence and Clerk authentication.
+- Added live cursors showing the mouse position of other participants on the canvas using React Flow mouse events and Liveblocks presence.
+- Separated the AI sidebar into its own `AiSidebar` component, preserving the existing floating slide-in behavior and styles.
+- Built the AI Architect tab with a scrollable chat area, empty state with starter chips, and input UI with auto-resizing textarea.
+- Built the Specs tab with a generate button and a static demo spec card.
+- Added canvas autosave and loading to persist project state before AI generation. Canvas JSON is stored in Vercel Blob and the URL is stored on the Prisma project record.
+- Fixed canvas UI bugs: dynamic Save Button states, custom node/edge deletion via Liveblocks mutators, non-blocking connection handles, preventing auto-zoom on first node drop, allowing Clerk avatars to load properly, and conditionally hiding the UserButton in the workspace navbar.
 
 ## In Progress
 
-- Next feature specs.
+- Next feature specs review.
 
 ## Next Up
 
