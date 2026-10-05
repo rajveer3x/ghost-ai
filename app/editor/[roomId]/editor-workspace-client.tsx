@@ -8,6 +8,7 @@ import { ProjectDialogs } from "@/components/editor/project-dialogs";
 import { ShareDialog } from "@/components/editor/share-dialog";
 import { useProjectActions } from "@/hooks/use-project-actions";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { CanvasWrapper } from "@/components/editor/canvas-wrapper";
 
 interface Project {
@@ -77,8 +78,19 @@ export function EditorWorkspaceClient({
         isOwner={isOwner}
       />
 
-      <div className="flex flex-1 overflow-hidden p-2 gap-2">
-        <div className={`shrink-0 transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-0 hidden'}`}>
+      <div className="relative flex-1 overflow-hidden">
+        {/* Central Canvas Area - fills the entire space */}
+        <main className="absolute inset-2 bg-[#141415] rounded-xl border border-zinc-800 overflow-hidden shadow-lg z-0">
+          <CanvasWrapper roomId={project.id} />
+        </main>
+
+        {/* Left Sidebar */}
+        <div 
+          className={cn(
+            "absolute top-2 bottom-2 left-2 z-10 w-64 transition-transform duration-300 ease-in-out shadow-2xl rounded-xl",
+            isSidebarOpen ? "translate-x-0" : "-translate-x-[calc(100%+16px)]"
+          )}
+        >
           <ProjectSidebar
             isOpen={isSidebarOpen}
             onClose={() => setIsSidebarOpen(false)}
@@ -91,14 +103,14 @@ export function EditorWorkspaceClient({
           />
         </div>
 
-        {/* Central Canvas Area */}
-        <main className="flex-1 bg-[#141415] rounded-xl border border-zinc-800 overflow-hidden relative shadow-lg min-w-0">
-          <CanvasWrapper roomId={project.id} />
-        </main>
-
         {/* Right Sidebar Placeholder (AI Chat) */}
-        {isRightSidebarOpen && (
-          <aside className="w-80 shrink-0 bg-[#141415] rounded-xl border border-zinc-800 flex flex-col z-10 shadow-lg overflow-hidden">
+        <div 
+          className={cn(
+            "absolute top-2 bottom-2 right-2 z-10 w-80 transition-transform duration-300 ease-in-out shadow-2xl rounded-xl",
+            isRightSidebarOpen ? "translate-x-0" : "translate-x-[calc(100%+16px)]"
+          )}
+        >
+          <aside className="h-full w-full bg-[#141415]/95 backdrop-blur-md rounded-xl border border-zinc-800 flex flex-col overflow-hidden">
             <div className="p-4 border-b border-zinc-800/50 flex flex-col gap-1">
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold text-zinc-100">AI Copilot</h3>
@@ -132,7 +144,7 @@ export function EditorWorkspaceClient({
               </div>
             </div>
           </aside>
-        )}
+        </div>
       </div>
 
       <ProjectDialogs

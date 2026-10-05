@@ -4,32 +4,35 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Phase
 
-- Not started
+- Core Editor UI
 
 ## Current Goal
 
-- Define the immediate implementation goal here.
+- Implement custom node types and drag-and-drop shape panel for the collaborative canvas.
 
 ## Completed
 
-- None yet.
+- Set up React Flow wrapper inside collaborative canvas.
+- Added a draggable shape panel component with various node types (rectangle, diamond, circle, pill, cylinder, hexagon).
+- Configured drag-and-drop mechanics to create nodes natively on the canvas using React Flow `useReactFlow` API to calculate precise canvas coordinates based on viewport.
+- Configured `CanvasNode` custom type.
 
 ## In Progress
 
-- None yet.
+- Next set of feature specs.
 
 ## Next Up
 
-- Add the next planned feature unit here.
+- Render specific visual appearances for all the different shape types.
 
 ## Open Questions
 
-- Add unresolved product or implementation questions here.
+- None.
 
 ## Architecture Decisions
 
-- Add decisions that affect the system design or data model.
+- Shape sizes are populated at drag time and baked into the node instances directly as styles via drop handlers. 
 
 ## Session Notes
 
-- Add context needed to resume work in the next session.
+- There's an ongoing turbopack next build issue causing `npm run build` to fail in sandbox specifically on `@liveblocks/react-flow/styles.css`, but typechecking succeeds perfectly fine with zero TypeScript errors.
