@@ -12,24 +12,31 @@ interface EditorNavbarProps {
 
 export function EditorNavbar({ isSidebarOpen, onToggleSidebar, projectName, actions }: EditorNavbarProps) {
   return (
-    <nav className="fixed top-0 left-0 right-0 h-14 flex items-center justify-between px-4 bg-background border-b border-border z-40">
-      <div className="flex items-center flex-1 gap-2">
-        <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
+    <nav className="h-14 shrink-0 flex items-center justify-between px-4 bg-[#0E0E10] border-b border-zinc-800/50 z-40">
+      <div className="flex items-center flex-1 gap-4">
+        <Button variant="ghost" size="icon" onClick={onToggleSidebar} className="text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800">
           {isSidebarOpen ? <PanelLeftClose className="h-5 w-5" /> : <PanelLeftOpen className="h-5 w-5" />}
         </Button>
+        <div className="flex flex-col">
+          <span className="font-semibold text-sm text-zinc-100">Liveblocks Live Room</span>
+          <span className="text-[10px] text-zinc-500 uppercase tracking-wider">Workspace</span>
+        </div>
       </div>
       
       <div className="flex items-center justify-center flex-1">
-        {projectName && (
-          <span className="font-medium text-sm truncate max-w-[200px] md:max-w-[300px]">
-            {projectName}
-          </span>
-        )}
       </div>
       
-      <div className="flex items-center justify-end flex-1 gap-2">
+      <div className="flex items-center justify-end flex-1 gap-3">
         {actions}
-        <UserButton />
+        <div className="pl-2 border-l border-zinc-800">
+          <UserButton 
+            appearance={{
+              elements: {
+                avatarBox: "h-8 w-8"
+              }
+            }}
+          />
+        </div>
       </div>
     </nav>
   );

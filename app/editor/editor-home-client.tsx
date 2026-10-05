@@ -35,35 +35,43 @@ export function EditorHomeClient({ myProjects, sharedProjects }: EditorHomeClien
   } = useProjectActions();
 
   return (
-    <div className="flex h-screen w-full bg-background overflow-hidden relative">
+    <div className="flex h-screen w-full bg-[#0E0E10] text-zinc-100 overflow-hidden flex-col">
       <EditorNavbar
         isSidebarOpen={isSidebarOpen}
         onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
       />
-      <ProjectSidebar
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-        myProjects={myProjects}
-        sharedProjects={sharedProjects}
-        onCreateProject={openCreateDialog}
-        onRenameProject={openRenameDialog}
-        onDeleteProject={openDeleteDialog}
-      />
       
-      {/* Main Canvas Area */}
-      <main className="flex-1 mt-14 flex flex-col items-center justify-center bg-muted/20 p-4">
-        <div className="text-center max-w-md mx-auto space-y-6">
-          <div className="space-y-2">
-            <h1 className="text-2xl font-medium tracking-tight">Create a project or open an existing one</h1>
-            <p className="text-muted-foreground text-sm">
-              Start a new architecture workspace, or choose a project from the sidebar.
-            </p>
-          </div>
-          <Button onClick={openCreateDialog}>
-            <Plus className="mr-2 h-4 w-4" /> New Project
-          </Button>
+      <div className="flex flex-1 overflow-hidden p-2 gap-2">
+        <div className={`shrink-0 transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-0 hidden'}`}>
+          <ProjectSidebar
+            isOpen={isSidebarOpen}
+            onClose={() => setIsSidebarOpen(false)}
+            myProjects={myProjects}
+            sharedProjects={sharedProjects}
+            onCreateProject={openCreateDialog}
+            onRenameProject={openRenameDialog}
+            onDeleteProject={openDeleteDialog}
+          />
         </div>
-      </main>
+        
+        {/* Main Canvas Area */}
+        <main className="flex-1 bg-[#141415] rounded-xl border border-zinc-800 overflow-hidden relative shadow-lg flex items-center justify-center min-w-0">
+          <div className="text-center max-w-md mx-auto space-y-6">
+            <div className="space-y-2">
+              <h1 className="text-2xl font-medium tracking-tight text-zinc-100">Create a project or open an existing one</h1>
+              <p className="text-zinc-400 text-sm">
+                Start a new architecture workspace, or choose a project from the sidebar.
+              </p>
+            </div>
+            <Button 
+              onClick={openCreateDialog}
+              className="bg-[#00D4FF] hover:bg-[#00D4FF]/90 text-black font-semibold"
+            >
+              <Plus className="mr-2 h-4 w-4" /> New Project
+            </Button>
+          </div>
+        </main>
+      </div>
 
       <ProjectDialogs
         activeDialog={activeDialog}
