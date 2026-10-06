@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { LiveblocksProvider, RoomProvider } from "@liveblocks/react/suspense";
 import { ClientSideSuspense } from "@liveblocks/react";
 import { ReactFlowProvider } from "@xyflow/react";
 import { CollaborativeCanvas } from "./collaborative-canvas";
@@ -30,16 +29,12 @@ interface CanvasWrapperProps {
 
 export function CanvasWrapper({ roomId }: CanvasWrapperProps) {
   return (
-    <LiveblocksProvider authEndpoint="/api/liveblocks-auth">
-      <ErrorBoundary fallback={<div className="flex h-full w-full items-center justify-center text-red-500">Failed to connect to the canvas room. Please try again later.</div>}>
-        <RoomProvider id={roomId} initialPresence={{ cursor: null, thinking: false }}>
-          <ClientSideSuspense fallback={<div className="flex h-full w-full items-center justify-center text-zinc-400">Loading canvas...</div>}>
-            <ReactFlowProvider>
-              <CollaborativeCanvas projectId={roomId} />
-            </ReactFlowProvider>
-          </ClientSideSuspense>
-        </RoomProvider>
-      </ErrorBoundary>
-    </LiveblocksProvider>
+    <ErrorBoundary fallback={<div className="flex h-full w-full items-center justify-center text-red-500">Failed to connect to the canvas room. Please try again later.</div>}>
+      <ClientSideSuspense fallback={<div className="flex h-full w-full items-center justify-center text-zinc-400">Loading canvas...</div>}>
+        <ReactFlowProvider>
+          <CollaborativeCanvas projectId={roomId} />
+        </ReactFlowProvider>
+      </ClientSideSuspense>
+    </ErrorBoundary>
   );
 }

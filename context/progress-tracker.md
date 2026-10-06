@@ -8,7 +8,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Goal
 
-- Implement Canvas autosave to Vercel Blob and Prisma.
+- All planned feature specs have been implemented.
 
 ## Completed
 
@@ -33,10 +33,23 @@ Update this file whenever the current phase, active feature, or implementation s
 - Built the Specs tab with a generate button and a static demo spec card.
 - Added canvas autosave and loading to persist project state before AI generation. Canvas JSON is stored in Vercel Blob and the URL is stored on the Prisma project record.
 - Fixed canvas UI bugs: dynamic Save Button states, custom node/edge deletion via Liveblocks mutators, non-blocking connection handles, preventing auto-zoom on first node drop, allowing Clerk avatars to load properly, and conditionally hiding the UserButton in the workspace navbar.
+- Implemented Trigger.dev design agent API routes (`POST /api/ai/design` and `POST /api/ai/design/token`) to trigger tasks and issue run-scoped public tokens.
+- Added `TaskRun` Prisma model to track AI background task ownership and history.
+- Implemented full AI design agent logic in `trigger/design-agent.ts` using Groq (`@ai-sdk/groq`) to interpret prompts and mutate Liveblocks storage directly.
+- Implemented AI Presence State (Spec 24): Added shared AI status feed via `aiStatusFeedSchema` and Liveblocks `RoomEvent`, and updated AI sidebar and live cursors to handle AI active/thinking states.
+- Implemented Sidebar Chat Feed (Spec 25): Added real-time room chat to the AI sidebar using a separate Liveblocks `ai-chat` RoomEvent feed. Added Zod schema validation and updated `AiSidebar` to handle sender, timestamp, and message broadcasting.
+- Implemented AI Chat Functional Integration (Spec 26): Wired up the AI sidebar UI to submit prompts to Trigger.dev, consume realtime run updates via `@trigger.dev/react-hooks` (`useRealtimeRun`), track execution state to disable inputs, display a compact loading status strip, and apply existing visual tokens (green accent).
+- Implemented AI Spec Generation Backend Flow (Spec 27): Added `POST /api/ai/spec` and `POST /api/ai/spec/token` routes to handle Trigger.dev tasks and run ownership tracking. Implemented `trigger/generate-spec.ts` to consume project nodes/edges/chat via Gemini (`@ai-sdk/google`) to generate technical markdown specs and report realtime generation status.
+- Implemented AI Spec Persistence and Download (Spec 28): Added `ProjectSpec` Prisma model to track generated specs. Updated `trigger/generate-spec.ts` to upload generated Markdown content directly to Vercel Blob and save metadata to Prisma. Added secure `GET /api/projects/[projectId]/specs/[specId]/download` route to validate collaborator access before streaming file downloads.
+- Implemented AI Spec UI Integration (Spec 29): Replaced dummy specs tab with real data fetched from the backend. Added a `Dialog` based modal to preview fetched Markdown content using `react-markdown`. Added direct download links to retrieve generated markdown specs.
+- Fixed a silent failure on the "Generate Spec" button where ungenerated Prisma models (`ProjectSpec`, `TaskRun`) and missing database tables were crashing the Next.js API routes. Regenerated the Prisma client and pushed the schema to the database.
+- Switched the `generate-spec` task to use the available Groq API key instead of Google, and added a `npm run trigger` script for running the required Trigger.dev background worker locally.
+- Updated the design API response to include a Trigger.dev public token scoped to the newly created run, enabling the AI sidebar to subscribe to run updates.
+- Validated spec-generation request payloads against the task's shared input schema before starting a Trigger.dev run.
 
 ## In Progress
 
-- Next feature specs review.
+- Review complete, project fully implemented according to specs.
 
 ## Next Up
 

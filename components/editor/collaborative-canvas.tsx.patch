@@ -1,0 +1,31 @@
+--- components/editor/collaborative-canvas.tsx
++++ components/editor/collaborative-canvas.tsx
+@@ -87,7 +87,7 @@
+     [screenToFlowPosition, onNodesChange],
+   );
+ 
+-  const handlePointerMove = useCallback((e: React.PointerEvent) => {
++  const handlePointerMove = useCallback((e: React.MouseEvent) => {
+     if (!reactFlowWrapper.current) return;
+     
+     const rect = reactFlowWrapper.current.getBoundingClientRect();
+@@ -104,11 +104,8 @@
+     <div 
+       className="relative h-full w-full" 
+       ref={reactFlowWrapper}
+-      onPointerMove={handlePointerMove}
+-      onPointerLeave={handlePointerLeave}
+     >
+       <PresenceAvatars />
+       <LiveCursors />
+       <ReactFlow
+         nodes={nodes}
+@@ -118,6 +115,8 @@
+         onConnect={onConnect}
+         onDelete={onDelete}
+         onDragOver={onDragOver}
++        onMouseMove={handlePointerMove}
++        onMouseLeave={handlePointerLeave}
+         onDrop={onDrop}
+         nodeTypes={nodeTypes}
+         edgeTypes={edgeTypes}
