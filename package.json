@@ -5,10 +5,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "prisma generate && next build --webpack",
+    "build": "npx prisma generate && next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma generate && prisma skills sync || exit 0",
+    "postinstall": "npx prisma generate && prisma skills sync",
     "contract:emit": "prisma contract emit",
     "trigger": "npx trigger.dev dev --env-file .env.local"
   },
