@@ -180,6 +180,7 @@ export function CollaborativeCanvas({ projectId }: { projectId: string }) {
         }}
         connectionMode={ConnectionMode.Loose}
         colorMode="dark"
+        proOptions={{ hideAttribution: true }}
       >
         <Background variant={BackgroundVariant.Dots} color="#27272a" gap={16} size={1.5} />
         <MiniMap 

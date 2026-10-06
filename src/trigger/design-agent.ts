@@ -1,7 +1,7 @@
 import { logger, task } from "@trigger.dev/sdk";
 import { generateObject } from 'ai';
 import { groq } from '@ai-sdk/groq';
-import { liveblocks } from "@/lib/liveblocks";
+import { getLiveblocks } from "@/lib/liveblocks";
 import { LiveObject } from "@liveblocks/node";
 import { z } from 'zod';
 
@@ -10,6 +10,7 @@ export const designAgent = task({
   run: async (payload: { prompt: string; roomId: string }) => {
     logger.log("Running design agent", { payload });
     const { prompt, roomId } = payload;
+    const liveblocks = getLiveblocks();
 
     try {
       // Set AI presence

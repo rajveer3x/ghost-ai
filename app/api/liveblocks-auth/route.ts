@@ -1,6 +1,6 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { liveblocks, getUserColor } from "@/lib/liveblocks";
+import { getLiveblocks, getUserColor } from "@/lib/liveblocks";
 import { checkProjectAccess } from "@/lib/project-access";
 
 export async function POST(request: Request) {
@@ -36,6 +36,8 @@ export async function POST(request: Request) {
     avatar: user.imageUrl || "",
     color: getUserColor(userId),
   };
+
+  const liveblocks = getLiveblocks();
 
   try {
     await liveblocks.getRoom(room);

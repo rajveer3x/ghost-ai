@@ -1,10 +1,16 @@
 import { Liveblocks } from "@liveblocks/node";
 
-const secretKey = process.env.LIVEBLOCK_SECRET_KEY || process.env.LIVEBLOCKS_SECRET_KEY || "sk_dev_dummy_key_for_build";
+let _liveblocks: Liveblocks | null = null;
 
-export const liveblocks = new Liveblocks({
-  secret: secretKey as string,
-});
+export function getLiveblocks() {
+  if (!_liveblocks) {
+    const secretKey = process.env.LIVEBLOCK_SECRET_KEY || process.env.LIVEBLOCKS_SECRET_KEY || "sk_dev_dummy_key_for_build";
+    _liveblocks = new Liveblocks({
+      secret: secretKey as string,
+    });
+  }
+  return _liveblocks;
+}
 
 const COLORS = [
   "#e81416",

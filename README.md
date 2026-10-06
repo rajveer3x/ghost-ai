@@ -1,5 +1,10 @@
 # Ghost AI 👻
 
+[![Next.js](https://img.shields.io/badge/Next.js-16.3-black)](https://nextjs.org/)
+[![Trigger.dev](https://img.shields.io/badge/Trigger.dev-v3-blue)](https://trigger.dev/)
+[![Liveblocks](https://img.shields.io/badge/Liveblocks-Realtime-red)](https://liveblocks.io/)
+[![Clerk](https://img.shields.io/badge/Clerk-Auth-6c47ff)](https://clerk.com/)
+
 Ghost AI is a real-time collaborative system design workspace. Describe a system architecture in plain English, and an AI agent maps that system onto a shared canvas. Collaborators can refine the architecture together in real-time, and finally, the app generates a complete technical specification Markdown document from the resulting graph.
 
 ## ✨ Features
