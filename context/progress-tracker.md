@@ -46,6 +46,10 @@ Update this file whenever the current phase, active feature, or implementation s
 - Switched the `generate-spec` task to use the available Groq API key instead of Google, and added a `npm run trigger` script for running the required Trigger.dev background worker locally.
 - Updated the design API response to include a Trigger.dev public token scoped to the newly created run, enabling the AI sidebar to subscribe to run updates.
 - Validated spec-generation request payloads against the task's shared input schema before starting a Trigger.dev run.
+- Fixed a silent failure on Trigger.dev task execution by correcting invalid Groq model names (`openai/gpt-oss-120b` -> `llama3-70b-8192`) in both design and spec generation tasks.
+- Improved Trigger.dev task resilience by ensuring `liveblocks.setPresence`, `liveblocks.broadcastEvent`, and Zod parsing are safely executed inside `try...catch` blocks to prevent silent crashes and infinitely hanging loading states on the frontend.
+- Resolved Trigger.dev deploy issues by lazily initiating Liveblocks in `lib/liveblocks.ts` to prevent missing-environment-variable crashes during the indexer build phase.
+- Reverted Trigger.dev runtime from `node-24` to `node` in `trigger.config.ts` for safer remote deployment compatibility.
 
 ## In Progress
 

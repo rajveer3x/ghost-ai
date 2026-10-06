@@ -11,27 +11,27 @@ export const designAgent = task({
     logger.log("Running design agent", { payload });
     const { prompt, roomId } = payload;
 
-    // Set AI presence
-    await liveblocks.setPresence(roomId, {
-      userId: "agent",
-      userInfo: {
-        name: "Design AI",
-        color: "#E11D48",
-      },
-      data: {
-        cursor: { x: 400, y: 300 },
-        thinking: true,
-      }
-    });
-
-    // Broadcast start status
-    await liveblocks.broadcastEvent(roomId, {
-      type: "ai-status-feed",
-      status: "Analyzing",
-      text: "Thinking about your request..."
-    });
-
     try {
+      // Set AI presence
+      await liveblocks.setPresence(roomId, {
+        userId: "agent",
+        userInfo: {
+          name: "Design AI",
+          color: "#E11D48",
+        },
+        data: {
+          cursor: { x: 400, y: 300 },
+          thinking: true,
+        }
+      });
+
+      // Broadcast start status
+      await liveblocks.broadcastEvent(roomId, {
+        type: "ai-status-feed",
+        status: "Analyzing",
+        text: "Thinking about your request..."
+      });
+
       // Fetch current canvas state
       const roomStorage = await liveblocks.getStorageDocument(roomId, "json") as any;
       const currentNodes = roomStorage?.flow?.nodes || {};
@@ -39,7 +39,7 @@ export const designAgent = task({
       const currentState = JSON.stringify({ nodes: currentNodes, edges: currentEdges });
 
       const result = await generateObject({
-        model: groq('openai/gpt-oss-120b'),
+        model: groq('llama3-70b-8192'),
         prompt: `You are an expert system architect collaborating on a canvas. Current task/message: "${prompt}".
 
 IMPORTANT ROLE RESTRICTION: You are STRICTLY a system architecture and software design assistant. If the user asks about ANY topic unrelated to software architecture, system design, programming, or the canvas (e.g., cooking, recipes, general knowledge, pop culture), you MUST politely refuse to answer and remind them of your specific role as a Design AI. Leave the 'actions' array empty in this case.

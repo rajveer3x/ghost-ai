@@ -3,7 +3,7 @@ import { prismaExtension } from "@trigger.dev/build/extensions/prisma";
 
 export default defineConfig({
   project: "proj_mxcytcbskevkswtzdgrv",
-  runtime: "node-24",
+  runtime: "node",
   logLevel: "log",
   maxDuration: 300,
   retries: {

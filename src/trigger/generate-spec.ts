@@ -20,9 +20,8 @@ export const generateSpec = task({
     logger.log("Running generate-spec task", { projectId: payload.projectId, roomId: payload.roomId });
     metadata.set("status", "validating");
 
-    const validatedPayload = InputSchema.parse(payload);
-
     try {
+      const validatedPayload = InputSchema.parse(payload);
       metadata.set("status", "generating");
       // Build context for the AI
       const systemPrompt = `You are an expert technical writer and software architect. Your task is to generate a comprehensive, clear, and well-structured Markdown technical specification based on the provided architecture canvas and chat history.
@@ -57,7 +56,7 @@ Please generate the Markdown technical specification now.`;
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            model: "openai/gpt-oss-120b",
+            model: "llama3-70b-8192",
             messages: [
               { role: "system", content: systemPrompt },
               { role: "user", content: promptContext }
