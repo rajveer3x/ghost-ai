@@ -758,3 +758,15 @@ svg.react-flow__connectionline {
 .react-flow__edge-text {
   fill: var(--xy-edge-label-color, var(--xy-edge-label-color-default));
 }
+
+
+/* Hide the "Powered by Liveblocks" watermark to fulfill professional design requirements */
+div[data-liveblocks-badge],
+.lb-root .lb-badge,
+a[href*="liveblocks.io"][target="_blank"]:has(svg),
+[class*="lb-watermark"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
