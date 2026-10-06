@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Bot, X, Send, FileText, Loader2 } from "lucide-react";
+import { Bot, X, Send, FileText, Loader2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -79,7 +79,9 @@ export function AiSidebar({ projectId, onClose }: AiSidebarProps) {
     enabled: !!runId && !!publicToken
   });
 
-  const isGenerating = (!!run && !['COMPLETED', 'CANCELED', 'FAILED', 'SYSTEM_FAILURE'].includes(run.status)) || others.some((other) => other.presence.thinking);
+  const isGeneratingRun = !!run && !['COMPLETED', 'CANCELED', 'FAILED', 'SYSTEM_FAILURE'].includes(run.status);
+  const isGeneratingChat = isGeneratingRun || others.some((other) => other.presence.thinking);
+  const isGeneratingSpec = isGeneratingRun;
 
   useEffect(() => {
     if (run && ['COMPLETED', 'CANCELED', 'FAILED', 'SYSTEM_FAILURE'].includes(run.status)) {
@@ -154,7 +156,7 @@ export function AiSidebar({ projectId, onClose }: AiSidebarProps) {
   };
 
   return (
-    <aside className="h-full w-full bg-[#141415]/95 backdrop-blur-md rounded-xl border border-zinc-800 flex flex-col overflow-hidden">
+    <aside className="h-full w-full bg-[#18181c]/95 backdrop-blur-xl rounded-xl border border-zinc-800 flex flex-col overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-zinc-800/50">
         <div className="flex items-center gap-3">
@@ -251,9 +253,8 @@ export function AiSidebar({ projectId, onClose }: AiSidebarProps) {
               )}
             </div>
 
-            {/* Input Area */}
-            <div className="flex flex-col border-t border-zinc-800/50 bg-[#141415]">
-              {isGenerating && (
+            <div className="flex flex-col border-t border-zinc-800/50 bg-black/20">
+              {isGeneratingChat && (
                 <div className="flex items-center gap-2 text-xs text-zinc-400 bg-zinc-900/80 px-4 py-2 border-b border-zinc-800/50">
                   <div className="h-2 w-2 rounded-full bg-[#62C073] animate-pulse" />
                   <span>{statusFeed?.text || statusFeed?.status || "AI is working..."}</span>
@@ -265,17 +266,17 @@ export function AiSidebar({ projectId, onClose }: AiSidebarProps) {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    disabled={isGenerating}
-                    placeholder={isGenerating ? "AI is thinking..." : "Ask AI Architect..."}
+                    disabled={isGeneratingChat}
+                    placeholder={isGeneratingChat ? "AI is thinking..." : "Ask AI Architect..."}
                     className="min-h-[72px] max-h-[160px] resize-none pr-12 bg-zinc-900/50 border-zinc-800 focus-visible:ring-1 focus-visible:ring-zinc-700 text-sm py-3 disabled:opacity-50"
                   />
                   <Button
                     size="icon"
                     onClick={() => handleSend(inputValue)}
-                    disabled={!inputValue.trim() || isGenerating}
-                    className={`absolute right-2 bottom-2 h-8 w-8 rounded-lg disabled:opacity-50 ${isGenerating || !inputValue.trim() ? 'bg-zinc-800 text-zinc-500' : 'bg-[#62C073] hover:bg-[#62C073]/90 text-black'}`}
+                    disabled={!inputValue.trim() || isGeneratingChat}
+                    className={`absolute right-2 bottom-2 h-8 w-8 rounded-lg disabled:opacity-50 ${isGeneratingChat || !inputValue.trim() ? 'bg-zinc-800 text-zinc-500' : 'bg-[#62C073] hover:bg-[#62C073]/90 text-black'}`}
                   >
-                    {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                    {isGeneratingChat ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                   </Button>
                 </div>
                 <div className="text-[10px] text-zinc-500 mt-2 text-center">
@@ -289,7 +290,7 @@ export function AiSidebar({ projectId, onClose }: AiSidebarProps) {
             <div className="flex flex-col gap-4">
               <Button 
                 className="w-full bg-[#00D4FF] hover:bg-[#00D4FF]/90 text-black font-semibold h-10" 
-                disabled={isGenerating}
+                disabled={isGeneratingSpec}
                 onClick={async () => {
                   const { getNodes, getEdges } = (window as any).reactFlowInstance || { getNodes: () => [], getEdges: () => [] };
                   try {
@@ -316,8 +317,8 @@ export function AiSidebar({ projectId, onClose }: AiSidebarProps) {
                   }
                 }}
               >
-                {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                {isGenerating ? "Generating..." : "Generate Spec"}
+                {isGeneratingSpec ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                {isGeneratingSpec ? "Generating..." : "Generate Spec"}
               </Button>
 
               {loadingSpecs ? (
@@ -344,24 +345,70 @@ export function AiSidebar({ projectId, onClose }: AiSidebarProps) {
                         <DialogTrigger 
                           render={<Button variant="outline" size="sm" className="flex-1 border-zinc-700 text-zinc-400 hover:text-zinc-200">Preview</Button>}
                         />
-                        <DialogContent className="max-w-3xl max-h-[80vh] flex flex-col bg-[#141415] border-zinc-800 text-zinc-100">
-                          <DialogHeader>
-                            <DialogTitle>spec-{spec.id.substring(0, 8)}.md</DialogTitle>
-                          </DialogHeader>
-                          <ScrollArea className="flex-1 mt-4 p-4 rounded-md border border-zinc-800 bg-[#18181c]">
-                            {loadingSpecContent ? (
-                              <div className="flex items-center justify-center p-8">
-                                <Loader2 className="h-6 w-6 text-zinc-400 animate-spin" />
+                        <DialogContent className="w-[95vw] max-w-4xl max-h-[85vh] h-[85vh] flex flex-col bg-[#0d0d0f] border-zinc-800/80 text-zinc-100 rounded-2xl p-0 overflow-hidden shadow-2xl">
+                          <DialogHeader className="px-6 py-4 border-b border-zinc-800/60 bg-[#141417] flex flex-row items-center justify-between sticky top-0 z-10 shrink-0 m-0">
+                            <div className="flex items-center gap-3">
+                              <div className="h-10 w-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                                <FileText className="h-5 w-5 text-indigo-400" />
                               </div>
-                            ) : (
-                              <div className="prose prose-invert prose-sm max-w-none">
-                                <ReactMarkdown>{specContent}</ReactMarkdown>
+                              <div className="flex flex-col items-start gap-0.5">
+                                <DialogTitle className="text-base font-semibold text-zinc-100 leading-tight">
+                                  Technical Specification
+                                </DialogTitle>
+                                <span className="text-xs text-zinc-500 font-medium">
+                                  spec-{spec.id.substring(0, 8)}.md
+                                </span>
                               </div>
-                            )}
-                          </ScrollArea>
-                          <div className="flex justify-end mt-4">
-                            <Button onClick={() => handleDownloadSpec(spec.id)} className="bg-[#00D4FF] hover:bg-[#00D4FF]/90 text-black">
+                            </div>
+                            <Button 
+                              onClick={() => handleDownloadSpec(spec.id)} 
+                              size="sm"
+                              className="bg-zinc-100 hover:bg-white text-zinc-900 shadow-sm font-medium gap-2 hidden sm:flex h-9 rounded-lg px-4"
+                            >
+                              <Download className="h-4 w-4" />
                               Download Markdown
+                            </Button>
+                          </DialogHeader>
+                          
+                          <div className="flex-1 overflow-hidden relative bg-[#0d0d0f]">
+                            {loadingSpecContent ? (
+                              <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#0d0d0f]/80 backdrop-blur-sm z-10 gap-4">
+                                <Loader2 className="h-8 w-8 text-indigo-500 animate-spin" />
+                                <p className="text-sm text-zinc-400 font-medium animate-pulse">Reading specification...</p>
+                              </div>
+                            ) : null}
+                            
+                            <ScrollArea className="h-full w-full">
+                              <div className="mx-auto max-w-3xl p-6 sm:p-10 pb-20">
+                                <div className="prose prose-invert max-w-none prose-zinc 
+                                  prose-headings:text-zinc-100 prose-headings:font-semibold tracking-tight
+                                  prose-h1:text-3xl prose-h1:mb-8 prose-h1:border-b prose-h1:border-zinc-800/60 prose-h1:pb-4
+                                  prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4
+                                  prose-h3:text-xl prose-h3:mt-8
+                                  prose-p:text-zinc-300 prose-p:leading-relaxed
+                                  prose-a:text-indigo-400 prose-a:no-underline hover:prose-a:underline
+                                  prose-strong:text-zinc-100 prose-strong:font-semibold
+                                  prose-code:text-[#62C073] prose-code:bg-[#62C073]/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none prose-code:font-medium
+                                  prose-pre:bg-[#141417] prose-pre:border prose-pre:border-zinc-800/60 prose-pre:shadow-sm prose-pre:rounded-xl prose-pre:p-4
+                                  prose-blockquote:border-l-indigo-500 prose-blockquote:bg-indigo-500/5 prose-blockquote:py-2 prose-blockquote:px-5 prose-blockquote:not-italic prose-blockquote:rounded-r-xl prose-blockquote:text-zinc-300
+                                  prose-ul:text-zinc-300 prose-li:marker:text-zinc-600 prose-ul:my-6
+                                  prose-table:border-collapse prose-th:border-b prose-th:border-zinc-800 prose-th:py-3 prose-th:text-left prose-td:border-b prose-td:border-zinc-800/50 prose-td:py-3
+                                  prose-hr:border-zinc-800/60 prose-hr:my-8
+                                ">
+                                  <ReactMarkdown>{specContent}</ReactMarkdown>
+                                </div>
+                              </div>
+                            </ScrollArea>
+                          </div>
+                          
+                          {/* Mobile fallback download button */}
+                          <div className="sm:hidden p-4 border-t border-zinc-800/60 bg-[#141417] shrink-0">
+                            <Button 
+                              onClick={() => handleDownloadSpec(spec.id)} 
+                              className="w-full bg-zinc-100 hover:bg-white text-zinc-900 gap-2 h-10 rounded-lg font-medium"
+                            >
+                              <Download className="h-4 w-4" />
+                              Download
                             </Button>
                           </div>
                         </DialogContent>

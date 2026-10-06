@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -35,13 +35,13 @@ export function ProjectDialogs({
   return (
     <>
       <Dialog open={activeDialog === "create"} onOpenChange={(open) => !open && onClose()}>
-        <DialogContent>
+        <DialogContent className="bg-[#18181c]/95 backdrop-blur-xl border-zinc-800 text-zinc-100 rounded-3xl p-6 sm:max-w-md">
           {activeDialog === "create" && <CreateProjectForm onClose={onClose} onCreate={onCreateProject} />}
         </DialogContent>
       </Dialog>
 
       <Dialog open={activeDialog === "rename"} onOpenChange={(open) => !open && onClose()}>
-        <DialogContent>
+        <DialogContent className="bg-[#18181c]/95 backdrop-blur-xl border-zinc-800 text-zinc-100 rounded-3xl p-6 sm:max-w-md">
           {activeDialog === "rename" && projectId && (
             <RenameProjectForm 
               projectId={projectId}
@@ -54,7 +54,7 @@ export function ProjectDialogs({
       </Dialog>
 
       <Dialog open={activeDialog === "delete"} onOpenChange={(open) => !open && onClose()}>
-        <DialogContent>
+        <DialogContent className="bg-[#18181c]/95 backdrop-blur-xl border-zinc-800 text-zinc-100 rounded-3xl p-6 sm:max-w-md">
           {activeDialog === "delete" && projectId && (
             <DeleteProjectForm 
               projectId={projectId}
@@ -72,6 +72,11 @@ export function ProjectDialogs({
 function CreateProjectForm({ onClose, onCreate }: { onClose: () => void, onCreate: (name: string) => Promise<void> }) {
   const [nameInput, setNameInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [randomSuffix, setRandomSuffix] = useState("a1b2c");
+
+  useEffect(() => {
+    setRandomSuffix(Math.random().toString(36).substring(2, 7));
+  }, []);
 
   const slugPreview = nameInput
     .toLowerCase()
@@ -105,24 +110,25 @@ function CreateProjectForm({ onClose, onCreate }: { onClose: () => void, onCreat
             value={nameInput}
             onChange={(e) => setNameInput(e.target.value)}
             autoFocus
+            className="bg-black/20 border-zinc-700/50 focus-visible:ring-[#00c8d4]/50 focus-visible:border-[#00c8d4]/50 rounded-xl"
           />
         </div>
-        <div className="text-sm text-muted-foreground flex items-center h-5">
+        <div className="text-sm text-zinc-500 flex items-center h-5">
           {nameInput && (
             <>
-              <span className="mr-1">URL slug:</span>
-              <span className="font-mono bg-muted px-1.5 py-0.5 rounded text-foreground">
-                {slugPreview}-XXXXX
+              <span className="mr-2">URL slug:</span>
+              <span className="font-mono bg-black/40 px-2 py-0.5 rounded-md text-zinc-300 border border-zinc-800/50">
+                {slugPreview}-{randomSuffix}
               </span>
             </>
           )}
         </div>
       </div>
-      <DialogFooter>
-        <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
+      <DialogFooter className="bg-transparent border-t-0 p-0 m-0 mt-2">
+        <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting} className="rounded-xl border-zinc-700 hover:bg-zinc-800 hover:text-zinc-100">
           Cancel
         </Button>
-        <Button type="submit" disabled={!nameInput.trim() || isSubmitting}>
+        <Button type="submit" disabled={!nameInput.trim() || isSubmitting} className="bg-[#00c8d4] hover:bg-[#00c8d4]/90 text-black font-medium rounded-xl shadow-lg shadow-[#00c8d4]/10 transition-all hover:shadow-[#00c8d4]/20">
           {isSubmitting ? "Creating..." : "Create Project"}
         </Button>
       </DialogFooter>
@@ -166,13 +172,14 @@ function RenameProjectForm({
           value={nameInput}
           onChange={(e) => setNameInput(e.target.value)}
           autoFocus
+          className="bg-black/20 border-zinc-700/50 focus-visible:ring-[#00c8d4]/50 focus-visible:border-[#00c8d4]/50 rounded-xl"
         />
       </div>
-      <DialogFooter>
-        <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
+      <DialogFooter className="bg-transparent border-t-0 p-0 m-0 mt-2">
+        <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting} className="rounded-xl border-zinc-700 hover:bg-zinc-800 hover:text-zinc-100">
           Cancel
         </Button>
-        <Button type="submit" disabled={!nameInput.trim() || nameInput === projectName || isSubmitting}>
+        <Button type="submit" disabled={!nameInput.trim() || nameInput === projectName || isSubmitting} className="bg-[#00c8d4] hover:bg-[#00c8d4]/90 text-black font-medium rounded-xl shadow-lg shadow-[#00c8d4]/10 transition-all hover:shadow-[#00c8d4]/20">
           {isSubmitting ? "Saving..." : "Save Changes"}
         </Button>
       </DialogFooter>
@@ -207,11 +214,11 @@ function DeleteProjectForm({
           Are you sure you want to delete <span className="font-semibold text-foreground">{projectName}</span>? This action cannot be undone.
         </DialogDescription>
       </DialogHeader>
-      <DialogFooter className="mt-6">
-        <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
+      <DialogFooter className="bg-transparent border-t-0 p-0 m-0 mt-6">
+        <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting} className="rounded-xl border-zinc-700 hover:bg-zinc-800 hover:text-zinc-100">
           Cancel
         </Button>
-        <Button type="button" variant="destructive" onClick={handleDelete} disabled={isSubmitting}>
+        <Button type="button" variant="destructive" onClick={handleDelete} disabled={isSubmitting} className="rounded-xl shadow-lg shadow-red-500/10 transition-all hover:shadow-red-500/20 bg-red-500/90 hover:bg-red-500 text-white font-medium">
           {isSubmitting ? "Deleting..." : "Delete"}
         </Button>
       </DialogFooter>

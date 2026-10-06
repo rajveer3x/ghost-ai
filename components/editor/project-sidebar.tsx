@@ -32,7 +32,7 @@ export function ProjectSidebar({
   activeProjectId
 }: ProjectSidebarProps) {
   return (
-    <div className="h-full w-full bg-[#141415] rounded-xl border border-zinc-800 flex flex-col overflow-hidden shadow-lg">
+    <div className="h-full w-full bg-[#18181c]/95 backdrop-blur-xl rounded-xl border border-zinc-800 flex flex-col overflow-hidden shadow-lg">
       <div className="flex items-center justify-between p-4 border-b border-zinc-800/50">
         <h2 className="text-sm font-semibold text-zinc-100">Projects</h2>
         <Button variant="ghost" size="icon" onClick={onClose} className="h-6 w-6 text-zinc-500 hover:text-zinc-100 md:hidden">

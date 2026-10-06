@@ -55,7 +55,7 @@ export function EditorWorkspaceClient({
   return (
     <LiveblocksProvider authEndpoint="/api/liveblocks-auth">
       <RoomProvider id={project.id} initialPresence={{ cursor: null, thinking: false }}>
-        <div className="flex h-screen w-full bg-[#0E0E10] text-zinc-100 overflow-hidden flex-col">
+        <div className="flex h-screen w-full bg-[#080809] text-zinc-100 overflow-hidden flex-col">
           <EditorNavbar
             isSidebarOpen={isSidebarOpen}
             onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -107,7 +107,7 @@ export function EditorWorkspaceClient({
 
           <div className="relative flex-1 overflow-hidden">
             {/* Central Canvas Area - fills the entire space */}
-            <main className="absolute inset-2 bg-[#141415] rounded-xl border border-zinc-800 overflow-hidden shadow-lg z-0">
+            <main className="absolute inset-2 bg-[#111114] rounded-xl border border-zinc-800 overflow-hidden shadow-lg z-0">
               <CanvasWrapper roomId={project.id} />
             </main>
 

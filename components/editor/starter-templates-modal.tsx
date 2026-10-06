@@ -92,34 +92,34 @@ function TemplatePreview({ template }: { template: CanvasTemplate }) {
 export function StarterTemplatesModal({ open, onOpenChange, onImport }: StarterTemplatesModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full sm:max-w-5xl lg:max-w-[1100px] max-h-[90vh] flex flex-col p-0 rounded-3xl bg-popover border-border">
+      <DialogContent className="w-full sm:max-w-5xl lg:max-w-[1100px] max-h-[90vh] flex flex-col p-0 rounded-3xl bg-[#18181c]/95 backdrop-blur-xl border-zinc-800 text-zinc-100 shadow-2xl">
         <DialogHeader className="p-8 pb-4">
-          <DialogTitle className="text-2xl text-foreground font-semibold">Import Template</DialogTitle>
-          <p className="text-base text-muted-foreground mt-2">
+          <DialogTitle className="text-2xl text-zinc-100 font-semibold tracking-tight">Import Template</DialogTitle>
+          <p className="text-base text-zinc-400 mt-2">
             Choose a starter template to pre-populate your canvas. Any existing nodes will be replaced — use ⌘Z to undo.
           </p>
         </DialogHeader>
         <ScrollArea className="flex-1 p-8 pt-0">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {CANVAS_TEMPLATES.map(template => (
-              <div key={template.id} className="flex flex-col bg-card border border-border rounded-2xl overflow-hidden hover:border-ring transition-colors shadow-sm">
-                <div className="h-64 border-b border-border p-6 bg-[#0A0A0A] flex items-center justify-center relative overflow-hidden">
-                  {/* Optional subtle grid background */}
-                  <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-                  <div className="relative z-10 w-full h-full flex items-center justify-center">
+              <div key={template.id} className="group flex flex-col bg-black/20 border border-zinc-800/50 rounded-2xl overflow-hidden hover:border-[#00c8d4]/50 transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-[#00c8d4]/5">
+                <div className="h-64 border-b border-zinc-800/50 p-6 bg-[#080809] flex items-center justify-center relative overflow-hidden">
+                  {/* Subtle grid background */}
+                  <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] opacity-50"></div>
+                  <div className="relative z-10 w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
                     <TemplatePreview template={template} />
                   </div>
                 </div>
                 <div className="p-6 flex flex-col flex-1">
-                  <h3 className="font-semibold text-card-foreground text-lg mb-2 tracking-tight">{template.name}</h3>
-                  <p className="text-sm text-muted-foreground flex-1 mb-6 leading-relaxed">{template.description}</p>
+                  <h3 className="font-semibold text-zinc-100 text-lg mb-2 tracking-tight">{template.name}</h3>
+                  <p className="text-sm text-zinc-400 flex-1 mb-6 leading-relaxed">{template.description}</p>
                   <Button 
                     variant="outline"
                     onClick={() => {
                       onImport(template);
                       onOpenChange(false);
                     }}
-                    className="w-full font-medium bg-background hover:bg-accent"
+                    className="w-full font-medium border-zinc-700/50 bg-[#111114] text-zinc-300 hover:bg-[#00c8d4] hover:text-black hover:border-[#00c8d4] dark:hover:bg-[#00c8d4] dark:hover:text-black dark:hover:border-[#00c8d4] transition-all rounded-xl"
                   >
                     <Download className="w-4 h-4 mr-2" />
                     Import
