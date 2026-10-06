@@ -8,7 +8,7 @@
     "build": "npx prisma generate && next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "npx prisma generate && prisma skills sync",
+    "postinstall": "npx prisma generate",
     "contract:emit": "prisma contract emit",
     "trigger": "npx trigger.dev dev --env-file .env.local"
   },
