@@ -46,4 +46,6 @@ dist/
 
 /lib/generated/prisma
 
-.trigger
+.triggertrigger.log
+dev.log
+scratch/
