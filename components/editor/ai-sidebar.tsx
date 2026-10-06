@@ -130,17 +130,22 @@ export function AiSidebar({ projectId, onClose }: AiSidebarProps) {
         body: JSON.stringify({ prompt: text, roomId: projectId, projectId })
       });
       const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to start design task');
+      }
+
       if (data.runId && data.publicToken) {
         setRunId(data.runId);
         setPublicToken(data.publicToken);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to trigger design agent:", error);
       const errorMsg: AiChatFeedMessage = { 
         type: "ai-chat",
         sender: "System",
         role: "system",
-        content: "Sorry, I encountered an error starting the design task.",
+        content: `Error: ${error?.message || "I encountered an error starting the design task."}`,
         timestamp: Date.now()
       };
       setMessages(prev => [...prev, errorMsg]);

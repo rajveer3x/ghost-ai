@@ -2,12 +2,13 @@ import { NextResponse } from 'next/server';
 import { auth as clerkAuth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 import { auth as triggerAuth, tasks } from '@trigger.dev/sdk/v3';
+import { checkProjectAccess } from '@/lib/project-access';
 
 export async function POST(req: Request) {
   const { userId } = await clerkAuth();
 
   if (!userId) {
-    return new NextResponse('Unauthorized', { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
@@ -15,19 +16,14 @@ export async function POST(req: Request) {
     const { prompt, roomId, projectId } = body;
 
     if (!prompt || !roomId || !projectId) {
-      return new NextResponse('Missing required fields', { status: 400 });
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Verify project ownership
-    const project = await prisma.project.findUnique({
-      where: {
-        id: projectId,
-        ownerId: userId,
-      },
-    });
+    // Resolve project access from roomId
+    const access = await checkProjectAccess(roomId);
 
-    if (!project) {
-      return new NextResponse('Project not found or unauthorized', { status: 404 });
+    if (!access.hasAccess || !access.project) {
+      return NextResponse.json({ error: 'Project not found or unauthorized' }, { status: 404 });
     }
 
     // Trigger the design task
@@ -51,8 +47,8 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ runId: run.id, publicToken });
-  } catch (error) {
+  } catch (error: any) {
     console.error('[DESIGN_POST]', error);
-    return new NextResponse('Internal Error', { status: 500 });
+    return NextResponse.json({ error: error?.message || 'Internal Error' }, { status: 500 });
   }
 }
