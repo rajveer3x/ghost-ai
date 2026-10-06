@@ -1,3 +1,4 @@
+import { Loader2 } from "lucide-react";
 import { useOthers } from "@liveblocks/react";
 import { useUser } from "@clerk/nextjs";
 import { useStore } from "@xyflow/react";
@@ -18,6 +19,7 @@ export function LiveCursors() {
             y={other.presence.cursor.y}
             color={other.info?.color || "#00D4FF"}
             name={other.info?.name || "Anonymous"}
+            thinking={other.presence.thinking || false}
           />
         );
       })}
@@ -25,7 +27,8 @@ export function LiveCursors() {
   );
 }
 
-function Cursor({ x, y, color, name }: { x: number; y: number; color: string; name: string }) {
+
+function Cursor({ x, y, color, name, thinking }: { x: number; y: number; color: string; name: string; thinking?: boolean }) {
   // Use React Flow's internal store to get the current transform (pan and zoom)
   const transform = useStore((state) => state.transform);
   
@@ -54,9 +57,10 @@ function Cursor({ x, y, color, name }: { x: number; y: number; color: string; na
         />
       </svg>
       <div
-        className="absolute top-5 left-2 px-2 py-0.5 rounded text-xs font-semibold text-white whitespace-nowrap drop-shadow-md"
+        className="absolute top-5 left-2 px-2 py-0.5 rounded text-xs font-semibold text-white whitespace-nowrap drop-shadow-md flex items-center gap-1.5"
         style={{ backgroundColor: color }}
       >
+        {thinking && <Loader2 className="h-3 w-3 animate-spin" />}
         {name}
       </div>
     </div>

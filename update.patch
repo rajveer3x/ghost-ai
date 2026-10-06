@@ -1,0 +1,27 @@
+--- app/editor/[roomId]/editor-workspace-client.tsx
++++ app/editor/[roomId]/editor-workspace-client.tsx
+@@ -10,6 +10,7 @@
+ import { Button } from "@/components/ui/button";
+ import { cn } from "@/lib/utils";
+ import { CanvasWrapper } from "@/components/editor/canvas-wrapper";
++import { LiveblocksProvider, RoomProvider } from "@liveblocks/react/suspense";
+ import { AiSidebar } from "@/components/editor/ai-sidebar";
+ 
+ import { SaveButton } from "@/components/editor/save-button";
+@@ -43,6 +44,8 @@
+   } = useProjectActions();
+ 
+   return (
++    <LiveblocksProvider authEndpoint="/api/liveblocks-auth">
++      <RoomProvider id={project.id} initialPresence={{ cursor: null, thinking: false }}>
+     <div className="flex h-screen w-full bg-[#0E0E10] text-zinc-100 overflow-hidden flex-col">
+       <EditorNavbar
+         isSidebarOpen={isSidebarOpen}
+@@ -128,6 +131,8 @@
+         onDeleteProject={deleteProject}
+       />
+     </div>
++      </RoomProvider>
++    </LiveblocksProvider>
+   );
+ }

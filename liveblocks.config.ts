@@ -25,10 +25,9 @@ declare global {
     };
 
     // Custom events, for useBroadcastEvent, useEventListener
-    RoomEvent: {};
-      // Example has two events, using a union
-      // | { type: "PLAY" } 
-      // | { type: "REACTION"; emoji: "🔥" };
+    RoomEvent: 
+      | import("./types/tasks").AiStatusFeedMessage
+      | import("./types/tasks").AiChatFeedMessage;
 
     // Custom metadata set on threads, for useThreads, useCreateThread, etc.
     ThreadMetadata: {

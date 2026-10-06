@@ -57,6 +57,15 @@ export function CollaborativeCanvas({ projectId }: { projectId: string }) {
   }, [saveStatus]);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      (window as any).reactFlowInstance = {
+        getNodes: () => nodes,
+        getEdges: () => edges,
+      };
+    }
+  }, [nodes, edges]);
+
+  useEffect(() => {
     // Load initial canvas state from backend if room is empty
     const loadInitialState = async () => {
       if (nodes.length === 0 && edges.length === 0) {
