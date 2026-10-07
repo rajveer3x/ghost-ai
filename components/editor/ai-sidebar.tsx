@@ -21,6 +21,7 @@ export function AiSidebar({ projectId, onClose }: AiSidebarProps) {
   const [statusFeed, setStatusFeed] = useState<AiStatusFeedMessage | null>(null);
   const [runId, setRunId] = useState<string | null>(null);
   const [publicToken, setPublicToken] = useState<string | null>(null);
+  const [isGeneratingSpecState, setIsGeneratingSpecState] = useState(false);
   
   const [specs, setSpecs] = useState<any[]>([]);
   const [loadingSpecs, setLoadingSpecs] = useState(false);
@@ -81,7 +82,7 @@ export function AiSidebar({ projectId, onClose }: AiSidebarProps) {
 
   const isGeneratingRun = !!run && !['COMPLETED', 'CANCELED', 'FAILED', 'SYSTEM_FAILURE'].includes(run.status);
   const isGeneratingChat = isGeneratingRun || others.some((other) => other.presence.thinking);
-  const isGeneratingSpec = isGeneratingRun;
+  const isGeneratingSpec = isGeneratingSpecState;
 
   useEffect(() => {
     if (run && ['COMPLETED', 'CANCELED', 'FAILED', 'SYSTEM_FAILURE'].includes(run.status)) {
@@ -298,27 +299,23 @@ export function AiSidebar({ projectId, onClose }: AiSidebarProps) {
                 disabled={isGeneratingSpec}
                 onClick={async () => {
                   const { getNodes, getEdges } = (window as any).reactFlowInstance || { getNodes: () => [], getEdges: () => [] };
+                  setIsGeneratingSpecState(true);
                   try {
                     const res = await fetch('/api/ai/spec', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ roomId: projectId, projectId, chatHistory: messages, nodes: getNodes(), edges: getEdges() })
                     });
-                    const data = await res.json();
-                    if (data.runId) {
-                      const tokenRes = await fetch('/api/ai/spec/token', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ runId: data.runId })
-                      });
-                      const tokenData = await tokenRes.json();
-                      if (tokenData.token) {
-                        setRunId(data.runId);
-                        setPublicToken(tokenData.token);
-                      }
+                    if (res.ok) {
+                      await fetchSpecs();
+                    } else {
+                      const err = await res.text();
+                      console.error('Failed to generate spec:', err);
                     }
                   } catch (e) {
-                    console.error(e);
+                    console.error('Error generating spec:', e);
+                  } finally {
+                    setIsGeneratingSpecState(false);
                   }
                 }}
               >
