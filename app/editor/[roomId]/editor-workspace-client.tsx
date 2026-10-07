@@ -106,8 +106,14 @@ export function EditorWorkspaceClient({
           />
 
           <div className="relative flex-1 overflow-hidden">
-            {/* Central Canvas Area - fills the entire space */}
-            <main className="absolute inset-2 bg-[#111114] rounded-xl border border-zinc-800 overflow-hidden shadow-lg z-0">
+            {/* Central Canvas Area - adjusts based on sidebars */}
+            <main 
+              className={cn(
+                "absolute inset-y-2 bg-[#111114] rounded-xl border border-zinc-800 overflow-hidden shadow-lg z-0 transition-all duration-300",
+                isSidebarOpen ? "left-[272px]" : "left-2",
+                isRightSidebarOpen ? "right-[336px]" : "right-2"
+              )}
+            >
               <CanvasWrapper roomId={project.id} />
             </main>
 
