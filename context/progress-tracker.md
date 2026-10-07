@@ -44,7 +44,7 @@ Update this file whenever the current phase, active feature, or implementation s
 - Implemented AI Spec UI Integration (Spec 29): Replaced dummy specs tab with real data fetched from the backend. Added a `Dialog` based modal to preview fetched Markdown content using `react-markdown`. Added direct download links to retrieve generated markdown specs.
 - Fixed a silent failure on the "Generate Spec" button where ungenerated Prisma models (`ProjectSpec`, `TaskRun`) and missing database tables were crashing the Next.js API routes. Regenerated the Prisma client and pushed the schema to the database.
 - Removed Trigger.dev logic from `generate-spec` to improve Vercel deployment reliability, using direct API requests instead.
-- Fixed a silent failure on Trigger.dev task execution by correcting invalid Groq model names (`openai/gpt-oss-120b` -> `llama3-70b-8192`) in both design and spec generation tasks.
+- Restored the Groq model `openai/gpt-oss-120b` (the 120B model) in both design and spec generation tasks. The model had been incorrectly downgraded to deprecated 70B models (`llama3-70b-8192` and later `llama-3.3-70b-versatile`), which caused 404 errors on Vercel.
 - Improved Trigger.dev task resilience by ensuring `liveblocks.setPresence`, `liveblocks.broadcastEvent`, and Zod parsing are safely executed inside `try...catch` blocks to prevent silent crashes and infinitely hanging loading states on the frontend.
 - Resolved Trigger.dev deploy issues by lazily initiating Liveblocks in `lib/liveblocks.ts` to prevent missing-environment-variable crashes during the indexer build phase.
 - Reverted Trigger.dev runtime from `node-24` to `node` in `trigger.config.ts` for safer remote deployment compatibility.

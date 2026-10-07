@@ -40,7 +40,7 @@ export const designAgent = task({
       const currentState = JSON.stringify({ nodes: currentNodes, edges: currentEdges });
 
       const result = await generateObject({
-        model: groq('llama-3.3-70b-versatile'),
+        model: groq('openai/gpt-oss-120b'),
         prompt: `You are an expert system architect collaborating on a canvas. Current task/message: "${prompt}".
 
 IMPORTANT ROLE RESTRICTION: You are STRICTLY a system architecture and software design assistant. If the user asks about ANY topic unrelated to software architecture, system design, programming, or the canvas (e.g., cooking, recipes, general knowledge, pop culture), you MUST politely refuse to answer and remind them of your specific role as a Design AI. Leave the 'actions' array empty in this case.
