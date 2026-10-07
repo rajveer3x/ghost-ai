@@ -1,10 +1,12 @@
 "use client";
 
 import { Panel, useReactFlow } from "@xyflow/react";
-import { ZoomIn, ZoomOut, Maximize, Undo2, Redo2 } from "lucide-react";
+import { ZoomIn, ZoomOut, Maximize, Undo2, Redo2, Camera, Check, Loader2 } from "lucide-react";
 import { useUndo, useRedo, useCanUndo, useCanRedo } from "@liveblocks/react/suspense";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { toPng } from "html-to-image";
 
 export function CanvasControls() {
   const reactFlowInstance = useReactFlow();
@@ -15,7 +17,45 @@ export function CanvasControls() {
   const canUndo = useCanUndo();
   const canRedo = useCanRedo();
 
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportSuccess, setExportSuccess] = useState(false);
+
   useKeyboardShortcuts({ reactFlowInstance, undo, redo });
+
+  const exportImage = async () => {
+    setIsExporting(true);
+    setExportSuccess(false);
+    try {
+      const viewportElement = document.querySelector(".react-flow__viewport") as HTMLElement;
+      if (!viewportElement) return;
+
+      const dataUrl = await toPng(viewportElement, {
+        backgroundColor: "#080809",
+        filter: (node) => {
+          if (
+            node?.classList?.contains("react-flow__panel") ||
+            node?.classList?.contains("react-flow__minimap") ||
+            node?.classList?.contains("react-flow__controls")
+          ) {
+            return false;
+          }
+          return true;
+        },
+      });
+
+      const link = document.createElement("a");
+      link.download = "architecture.png";
+      link.href = dataUrl;
+      link.click();
+      
+      setExportSuccess(true);
+      setTimeout(() => setExportSuccess(false), 2000);
+    } catch (error) {
+      console.error("Failed to export image", error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <Panel position="bottom-left" className="bg-zinc-900 border border-zinc-800 rounded-full flex items-center p-1 shadow-lg ml-6 mb-24 z-50">
@@ -71,6 +111,27 @@ export function CanvasControls() {
           title="Redo (Cmd/Ctrl + Y)"
         >
           <Redo2 className="h-4 w-4" />
+        </Button>
+      </div>
+
+      <div className="w-px h-6 bg-zinc-800 mx-1" />
+
+      <div className="flex items-center gap-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 rounded-full text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 disabled:opacity-50"
+          onClick={exportImage}
+          disabled={isExporting}
+          title="Export as PNG"
+        >
+          {isExporting ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : exportSuccess ? (
+            <Check className="h-4 w-4 text-green-500" />
+          ) : (
+            <Camera className="h-4 w-4" />
+          )}
         </Button>
       </div>
     </Panel>

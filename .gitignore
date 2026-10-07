@@ -49,3 +49,4 @@ dist/
 .triggertrigger.log
 dev.log
 scratch/
+.trigger/

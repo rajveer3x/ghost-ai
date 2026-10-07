@@ -50,6 +50,7 @@ Update this file whenever the current phase, active feature, or implementation s
 - Improved Trigger.dev task resilience by ensuring `liveblocks.setPresence`, `liveblocks.broadcastEvent`, and Zod parsing are safely executed inside `try...catch` blocks to prevent silent crashes and infinitely hanging loading states on the frontend.
 - Resolved Trigger.dev deploy issues by lazily initiating Liveblocks in `lib/liveblocks.ts` to prevent missing-environment-variable crashes during the indexer build phase.
 - Reverted Trigger.dev runtime from `node-24` to `node` in `trigger.config.ts` for safer remote deployment compatibility.
+- Implemented Export Canvas Image (Spec 30): Added an export button to canvas controls, leveraging `html-to-image` to capture the React Flow viewport and trigger a native browser PNG download with explicitly configured dark background settings.
 
 ## In Progress
 
