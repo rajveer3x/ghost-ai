@@ -28,6 +28,7 @@ export function AiSidebar({ projectId, onClose }: AiSidebarProps) {
   const [selectedSpec, setSelectedSpec] = useState<any>(null);
   const [specContent, setSpecContent] = useState<string>("");
   const [loadingSpecContent, setLoadingSpecContent] = useState(false);
+  const [specError, setSpecError] = useState<string | null>(null);
 
   const fetchSpecs = useCallback(async () => {
     setLoadingSpecs(true);
@@ -300,6 +301,7 @@ export function AiSidebar({ projectId, onClose }: AiSidebarProps) {
                 onClick={async () => {
                   const { getNodes, getEdges } = (window as any).reactFlowInstance || { getNodes: () => [], getEdges: () => [] };
                   setIsGeneratingSpecState(true);
+                  setSpecError(null);
                   try {
                     const res = await fetch('/api/ai/spec', {
                       method: 'POST',
@@ -311,9 +313,11 @@ export function AiSidebar({ projectId, onClose }: AiSidebarProps) {
                     } else {
                       const err = await res.text();
                       console.error('Failed to generate spec:', err);
+                      setSpecError(err || 'Failed to generate spec');
                     }
-                  } catch (e) {
+                  } catch (e: any) {
                     console.error('Error generating spec:', e);
+                    setSpecError(e.message || 'An unexpected error occurred');
                   } finally {
                     setIsGeneratingSpecState(false);
                   }
@@ -322,6 +326,12 @@ export function AiSidebar({ projectId, onClose }: AiSidebarProps) {
                 {isGeneratingSpec ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 {isGeneratingSpec ? "Generating..." : "Generate Spec"}
               </Button>
+              
+              {specError && (
+                <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-lg whitespace-pre-wrap">
+                  {specError}
+                </div>
+              )}
 
               {loadingSpecs ? (
                 <div className="text-sm text-zinc-500 text-center py-4">Loading specs...</div>
