@@ -64,11 +64,11 @@ export function EditorWorkspaceClient({
             actions={
               <>
                 <SaveButton />
-                <Button variant="outline" size="sm" onClick={() => setIsTemplatesModalOpen(true)} className="border-zinc-800 bg-transparent hover:bg-zinc-800 text-zinc-300">
+                <Button variant="outline" size="sm" onClick={() => setIsTemplatesModalOpen(true)} className="border-zinc-800/80 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-300 rounded-lg transition-all duration-200 shadow-sm">
                   <LayoutTemplate className="mr-2 h-4 w-4" />
                   Templates
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => setIsShareDialogOpen(true)} className="border-zinc-800 bg-transparent hover:bg-zinc-800 text-zinc-300">
+                <Button variant="outline" size="sm" onClick={() => setIsShareDialogOpen(true)} className="border-zinc-800/80 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-300 rounded-lg transition-all duration-200 shadow-sm">
                   <Share className="mr-2 h-4 w-4" />
                   Share
                 </Button>
@@ -76,7 +76,7 @@ export function EditorWorkspaceClient({
                   variant="default"
                   size="sm"
                   onClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
-                  className="bg-[#00D4FF] hover:bg-[#00D4FF]/90 text-black font-medium"
+                  className="bg-[#00D4FF] hover:bg-[#00D4FF]/90 text-black font-semibold rounded-lg shadow-[0_0_15px_rgba(0,212,255,0.3)] transition-all duration-200"
                 >
                   <Sparkles className="mr-2 h-4 w-4" />
                   AI

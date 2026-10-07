@@ -189,18 +189,24 @@ export function AiSidebar({ projectId, onClose }: AiSidebarProps) {
       <div className="flex-1 overflow-hidden flex flex-col">
         <Tabs defaultValue="architect" className="h-full flex flex-col">
           <div className="px-4 pt-4">
-            <TabsList className="grid w-full grid-cols-2 bg-zinc-900/80 p-1 border border-zinc-800/50 rounded-lg">
+            <TabsList className="grid w-full grid-cols-3 bg-[#0d0d0f] p-1 border border-zinc-800/80 rounded-xl shadow-sm">
               <TabsTrigger
                 value="architect"
-                className="text-xs data-[state=active]:bg-[#62C073]/10 data-[state=active]:text-[#62C073] text-zinc-400"
+                className="text-xs font-medium rounded-lg transition-all duration-200 data-[state=active]:bg-[#2c2c30] data-[state=active]:text-white data-[state=active]:shadow-sm text-zinc-400 hover:text-zinc-200"
               >
                 AI Architect
               </TabsTrigger>
               <TabsTrigger
                 value="specs"
-                className="text-xs data-[state=active]:bg-[#62C073]/10 data-[state=active]:text-[#62C073] text-zinc-400"
+                className="text-xs font-medium rounded-lg transition-all duration-200 data-[state=active]:bg-[#2c2c30] data-[state=active]:text-white data-[state=active]:shadow-sm text-zinc-400 hover:text-zinc-200"
               >
                 Specs
+              </TabsTrigger>
+              <TabsTrigger
+                value="shortcuts"
+                className="text-xs font-medium rounded-lg transition-all duration-200 data-[state=active]:bg-[#2c2c30] data-[state=active]:text-white data-[state=active]:shadow-sm text-zinc-400 hover:text-zinc-200"
+              >
+                Shortcuts
               </TabsTrigger>
             </TabsList>
           </div>
@@ -432,6 +438,45 @@ export function AiSidebar({ projectId, onClose }: AiSidebarProps) {
                   </div>
                 ))
               )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="shortcuts" className="flex-1 overflow-y-auto p-4 m-0 mt-4 data-[state=active]:block">
+            <div className="flex flex-col gap-4">
+              <div className="rounded-xl border border-zinc-800/80 bg-[#18181c] overflow-hidden">
+                <div className="p-4 border-b border-zinc-800/80 bg-zinc-900/50">
+                  <h4 className="font-semibold text-sm text-zinc-100 flex items-center gap-2">
+                    <Bot className="h-4 w-4 text-indigo-400" />
+                    Canvas Tips & Shortcuts
+                  </h4>
+                  <p className="text-xs text-zinc-400 mt-1">Use these shortcuts to design faster.</p>
+                </div>
+                
+                <div className="p-2 flex flex-col gap-1">
+                  {[
+                    { keys: ["Backspace", "Del"], desc: "Remove selected element" },
+                    { keys: ["Ctrl", "Z"], desc: "Undo last action" },
+                    { keys: ["Ctrl", "Y"], desc: "Redo action" },
+                    { keys: ["Space", "Drag"], desc: "Pan around canvas" },
+                    { keys: ["Scroll"], desc: "Zoom in and out" },
+                    { keys: ["Double Click"], desc: "Edit node text" }
+                  ].map((shortcut, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-800/50 transition-colors">
+                      <span className="text-xs text-zinc-300 font-medium">{shortcut.desc}</span>
+                      <div className="flex items-center gap-1">
+                        {shortcut.keys.map((k, i) => (
+                          <span key={i} className="flex items-center gap-1">
+                            {i > 0 && <span className="text-zinc-600 text-[10px]">+</span>}
+                            <kbd className="font-sans text-[10px] px-1.5 py-0.5 bg-[#2c2c30] text-zinc-300 rounded-md border border-zinc-700/80 shadow-sm">
+                              {k}
+                            </kbd>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </TabsContent>
         </Tabs>
